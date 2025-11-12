@@ -1,0 +1,4215 @@
+#This file was created by <magi> Thu Oct 21 07:00:25 1999
+#LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
+\lyxformat 2.15
+\textclass article
+\language finnish
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage widemarginsa4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+HPC Exercice 1: MPI ping
+\layout Author
+
+Marko Grönroos
+\layout Section
+
+ping.cc 
+\layout Standard
+
+My implementation of ping uses a home-made base class library (Strings,
+ etc), and a quickly made C++ coating for MPI calls.
+ The coating is just a test, and would probably do better if implemented
+ on top of streams.
+\layout Standard
+
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include "mpi++.h"
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <stdio.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <applic.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <Math.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#define MAX_SIZE 1000000
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+Main () {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPIInstance mpi (mArgc, mArgv);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Reread application parameters and put the into variables
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int msgMinlen
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ = mParams[0];
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int msgIncrement = mParams[1];
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int msgMaxlen
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ = mParams[2];
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int loops = mParamMap["loops"];
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Vector record ((msgMaxlen-msgMinlen)/msgIncrement+1);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+for (int i=0; i<record.size; i++)
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+record[i] = 0.0;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Create a buffer, and allocate enough space for it.
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+String buffer;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+buffer.reserve (msgMaxlen);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if (mpi.getRank() == 0) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Sender process
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+printf ("Sender iterating for %d...%d +=%d (%d values)
+\backslash 
+n",
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+msgMinlen, msgMaxlen, msgIncrement, record.size);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+for (int l=0; l<loops; l++) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+fprintf (stderr, "
+\backslash 
+r% 5d
+\backslash 
+r", l);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Send packets of growing sizes
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+for (int s=msgMinlen; s<=msgMaxlen; s+=msgIncrement) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+buffer.len = s; // Force the buffer size; don't care about contents
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Bounce the buffer from Echo, and measure time
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double t1 = mpi.time();
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+mpi.send (buffer, 1);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+mpi.recv (buffer, buffer.len, 1);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double t2 = mpi.time();
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Record time difference in milliseconds
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+record[(s-msgMinlen)/msgIncrement] += (t2-t1)*1000/2;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Display statistics
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+for (int i=0; i<record.size; i++)
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+printf ("%d
+\backslash 
+t%1.6f
+\backslash 
+n", msgMinlen+i*msgIncrement, record[i]/double(loops));
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Send stop message to the Echo
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+mpi.send ("stop", 1);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+} else {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Echo process
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+while (true) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+mpi.recv (buffer, MAX_SIZE, 0);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if (buffer == "stop")
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+break;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+mpi.send (buffer, 0);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+end:;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Section
+
+Tests 
+\layout Standard
+
+I wasn't able to compile the needed libraries on ÅA machines, so I used
+ just a single machine, with a single processor, but with two virtual processors.
+\layout Standard
+
+Test run:
+\layout Quotation
+
+
+\family typewriter 
+> /usr/local/src/mpich/bin/mpirun -np 2 ping 1 10000 100001 -loops=1000
+\layout Quotation
+
+
+\family typewriter 
+Sender iterating for 1...100001 +=10000 (11 values)
+\layout Quotation
+
+
+\family typewriter 
+1
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+2.125779
+\layout Quotation
+
+
+\family typewriter 
+10001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+2.338599
+\layout Quotation
+
+
+\family typewriter 
+20001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+2.418336
+\layout Quotation
+
+
+\family typewriter 
+30001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+2.717577
+\layout Quotation
+
+
+\family typewriter 
+40001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+18.308221
+\layout Quotation
+
+
+\family typewriter 
+50001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+63.814653
+\layout Quotation
+
+
+\family typewriter 
+60001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+81.402558
+\layout Quotation
+
+
+\family typewriter 
+70001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+81.351042
+\layout Quotation
+
+
+\family typewriter 
+80001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+81.497070
+\layout Quotation
+
+
+\family typewriter 
+90001
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+81.534450
+\layout Quotation
+
+
+\family typewriter 
+100001
+\protected_separator 
+
+\protected_separator 
+81.260095
+\layout Standard
+
+Results plotted with gnuplot:
+\layout Standard
+
+
+\family typewriter 
+plot 
+\begin_inset Quotes eld
+\end_inset 
+
+ping.log
+\begin_inset Quotes erd
+\end_inset 
+
+ u 1:2 w l
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center 
+
+\begin_inset Figure size 297 208
+file ping.eps
+width 3 50
+angle 270
+flags 9
+
+\end_inset 
+
+
+\layout Section
+
+C++ MPI coating
+\layout Standard
+
+This coating is just a test.
+\layout Subsection
+
+mpi++.h
+\layout Standard
+
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <object.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <cstring.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include <mpi.h>
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+class MPIInstance : public Object {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Status mMPIStatus;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+ public:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPIInstance
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+(int& argc, char**& argv);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+~MPIInstance
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+();
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Returns the MPI process rank of the current process.
+ */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+getRank
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+() const;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Sends a message.
+ */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+void
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+send
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+(const String& buffer, int receiver);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Receives a message.
+ Blocking.
+ */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+void
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+recv
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+(String& buffer, int maxlen, int sender);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Coating for the other recv.
+ */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+String
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+recv
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+(int maxlen, int sender);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Returns the number of processor in the given comm channel */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+size
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+(int communicator) const;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+/** Returns a time stamp.
+ */
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+time
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+() const;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+};
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Subsection
+
+mpi++.cc
+\layout Standard
+
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+#include "mpi++.h"
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+MPIInstance::MPIInstance (int& argc, char**& argv) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Init (&argc, &argv);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+MPIInstance::~MPIInstance () {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ MPI_Finalize(); 
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+int MPIInstance::getRank () const {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int myrank;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Comm_rank (MPI_COMM_WORLD, &myrank);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return myrank;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+void MPIInstance::send (const String& buffer, int target) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Send (buffer.getbuffer(), buffer.len, MPI_CHAR, target, 99, MPI_COMM_WORLD);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+void MPIInstance::recv (String& buffer, int maxlen, int source) {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+buffer.ensure (maxlen+1);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Recv(buffer.getbuffer(), maxlen, MPI_CHAR, source, 99,
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ MPI_COMM_WORLD, &mMPIStatus);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int len;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MPI_Get_count (&mMPIStatus, MPI_CHAR, &len);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Ensure string termination (there is always room for one 0 in
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// MagiClib Strings).
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+buffer.getbuffer()[buffer.len=len] = 0;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+String MPIInstance::recv (int maxlen, int sender) return result {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+recv (result, maxlen, sender);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+int MPIInstance::size (int communicator) const {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int size;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ MPI_Comm_size(communicator,&size);
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return size;
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+double MPIInstance::time () const {
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return MPI_Wtime();
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+}
+\the_end
