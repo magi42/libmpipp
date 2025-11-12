@@ -1,296 +1,432 @@
-#LyX 1.3 created this file. For more info see http://www.lyx.org/
-\lyxformat 221
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
+\begin_preamble
+\usepackage{a4wide}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
 \language english
-\inputencoding latin1
-\fontscheme default
+\language_package default
+\inputencoding iso8859-1
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
-\spacing single 
-\papersize Default
-\paperpackage widemarginsa4
-\use_geometry 0
-\use_amsmath 0
-\use_natbib 0
-\use_numerical_citations 0
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 0
+\use_package mathtools 1
+\use_package mhchem 0
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
-\quotes_language english
-\quotes_times 2
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 2
 \paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
 
-\layout Title
+\begin_body
 
+\begin_layout Title
 Parallel computing course assignment solution:
-\newline 
+\begin_inset Newline newline
+\end_inset
+
 Parallel N-Body simulation in C++ with MPI
-\layout Author
+\end_layout
 
-Marko Grönroos
-\layout Section
+\begin_layout Author
+Marko GrÃ¶nroos
+\end_layout
 
+\begin_layout Section
 Introduction
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I present here parallel (in addition to non-parallel) solution to the N-body
  simulation problem.
  The basic Newton's motion equations describing N-body system are:
-\layout Standard
+\end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\vec{F}_{a}=m_{a}G\sum_{b=0,b\neq a}^{N-1}m_{b}\left(\frac{\vec{x}_{b}-\vec{x}_{a}}{||\vec{x}_{b}-\vec{x}_{a}||^{3}}\right)\label{voima}
+\end{equation}
 
-\begin_inset Formula \begin{equation}
-\vec{F}_{a}=m_{a}G\sum_{b=0,b\neq a}^{N-1}m_{b}\left(\frac{\vec{x}_{b}-\vec{x}_{a}}{||\vec{x}_{b}-\vec{x}_{a}||^{3}}\right)\label{voima}\end{equation}
-
-\end_inset 
+\end_inset
 
  
-\begin_inset Formula \begin{equation}
-\vec{a}_{a}=\frac{\vec{F}_{a}}{m_{a}}\label{kiihtyvyys}\end{equation}
+\begin_inset Formula 
+\begin{equation}
+\vec{a}_{a}=\frac{\vec{F}_{a}}{m_{a}}\label{kiihtyvyys}
+\end{equation}
 
-\end_inset 
-
-
-\begin_inset Formula \[
-\vec{v}_{a}(t+h)=\vec{v}_{a}(t)+h\cdot\vec{a}_{a}\]
-
-\end_inset 
+\end_inset
 
 
-\begin_inset Formula \begin{equation}
-\vec{x}_{a}(t+h)=\vec{x}_{a}(t)+h\cdot\vec{v}_{a}(t+h)\label{liike}\end{equation}
+\begin_inset Formula 
+\[
+\vec{v}_{a}(t+h)=\vec{v}_{a}(t)+h\cdot\vec{a}_{a}
+\]
 
-\end_inset 
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\vec{x}_{a}(t+h)=\vec{x}_{a}(t)+h\cdot\vec{v}_{a}(t+h)\label{liike}
+\end{equation}
+
+\end_inset
 
  where 
 \begin_inset Formula $\vec{F}$
-\end_inset 
+\end_inset
 
  is a force vector that describes all the forces affecting a body, 
 \begin_inset Formula $m$
-\end_inset 
+\end_inset
 
  is a mass (in kg) of a body, G is the gravitational constant 
 \begin_inset Formula $G=6.67259\cdot10^{-11}$
-\end_inset 
+\end_inset
 
 , 
 \begin_inset Formula $\vec{x}$
-\end_inset 
+\end_inset
 
  is a position vector of a body, 
 \begin_inset Formula $||\vec{x}_{b}-\vec{x}_{a}||$
-\end_inset 
+\end_inset
 
  is the euclidean distance between two bodies, 
 \begin_inset Formula $\vec{a}$
-\end_inset 
+\end_inset
 
  is the acceleration vector of a body, 
 \begin_inset Formula $t$
-\end_inset 
+\end_inset
 
  is time, and 
 \begin_inset Formula $h$
-\end_inset 
+\end_inset
 
  is the time step of the iteration.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The source code and documentation are available from 
-\family typewriter 
+\family typewriter
 http://iki.fi/magi/opinnot/mpi/
-\family default 
+\family default
 .
-\layout Section
+\end_layout
 
+\begin_layout Section
 Object oriented design
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The N-body system is abstracted in the class 
-\emph on 
+\emph on
 NBody
-\emph toggle 
- which is a system containing bodies of class 
-\emph on 
+\emph default
+ 
+\emph toggle
+which is a system containing bodies of class
+\emph default
+ 
+\emph on
 Body
-\emph toggle 
+\emph toggle
 .
  The basic class relationships are shown in Figure 
-\begin_inset LatexCommand \ref{fig: classes}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: classes"
 
-\end_inset 
+\end_inset
 
 , with some of the central member attributes and methods of the classes.
-\layout Standard
+\begin_inset Separator latexpar
+\end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-class1.eps
-	display monochrome
 	width 90col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Class hierarchy.
  
-\begin_inset LatexCommand \label{fig: classes}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: classes"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
 
 
-\layout Subsection
+\end_layout
 
-Class
-\emph on 
- Body
-\layout Standard
+\end_inset
 
-The abstraction for bodies is class 
-\emph on 
+
+\end_layout
+
+\begin_layout Subsection
+Class 
+\emph on
 Body
-\emph toggle 
+\end_layout
+
+\begin_layout Standard
+The abstraction for bodies is class 
+\emph on
+Body
+\emph toggle
 .
  The attributes of the bodies are position and velocity, represented in
  two-dimensional vectors.
- For vectors, I use the 
-\emph on 
+ For vectors, I use the
+\emph default
+ 
+\emph on
 Coord2D
-\emph toggle 
- class from 
-\noun on 
+\emph default
+ 
+\emph toggle
+class from 
+\noun on
 MagiClib
-\noun toggle 
+\noun toggle
 .
  Using three-dimensional coordinates would be straight-forward, by replacing
- the 
-\emph on 
+ the
+\emph default
+ 
+\emph on
 Coord2D
-\emph toggle 
- with 
-\emph on 
+\emph default
+ 
+\emph toggle
+with
+\emph default
+ 
+\emph on
 Coord3D
-\emph toggle 
+\emph toggle
 , which is an identical class with additional dimension.
-\layout Subsection
+\end_layout
 
-Class
-\emph on 
- NBody
-\layout Standard
-
-The 
-\emph on 
+\begin_layout Subsection
+Class 
+\emph on
 NBody
-\emph toggle 
- class presents a non-parallel solution to the N-body problem.
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+NBody
+\emph default
+ 
+\emph toggle
+class presents a non-parallel solution to the N-body problem.
  Parallelization of the N-body problem is an algorithmic specialization,
- and thus implemented by inheritance with the 
-\emph on 
+ and thus implemented by inheritance with the
+\emph default
+ 
+\emph on
 RingNBody
-\emph toggle 
- class, as explained below.
-\layout Subsection
+\emph default
+ 
+\emph toggle
+class, as explained below.
+\end_layout
 
+\begin_layout Subsection
 Initialization framework
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Initialization of the system is done by initializer objects that visit bodies
  to initialize them.
  The initializers inherit the baseclass 
-\emph on 
+\emph on
 BodyIniter
-\emph toggle 
- and implement its 
-\emph on 
+\emph default
+ 
+\emph toggle
+and implement its
+\emph default
+ 
+\emph on
 visit()
-\emph toggle 
- method.
+\emph default
+ 
+\emph toggle
+method.
  The initializer can use the body index number parameter if it wants to.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I implemented two initializers, the 
-\emph on 
+\emph on
 RandomIniter
-\emph toggle 
- and 
-\emph on 
+\emph default
+ 
+\emph toggle
+and
+\emph default
+ 
+\emph on
 PresetIniter
-\emph toggle 
+\emph toggle
 .
-\layout Paragraph
+\end_layout
 
+\begin_layout Paragraph
 RandomIniter
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 initializes the bodies with evenly distributed random values in domain given
  in parameters.
-\layout Paragraph
+\end_layout
 
+\begin_layout Paragraph
 PresetIniter
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 initializes the bodies with parameters given in the parameter file for the
  application.
-\layout Subsection
+\end_layout
 
+\begin_layout Subsection
 Graphics
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The N-body system is visualized using MPE graphics window.
  The diameter of each body is calculated from its mass 
 \begin_inset Formula $M$
-\end_inset 
+\end_inset
 
 , according to the density parameter 
 \begin_inset Formula $\rho,$
-\end_inset 
+\end_inset
 
  as follows:
-\layout Standard
+\end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\[
+V=\frac{1000M}{\rho}=\frac{4}{3}\pi r^{3}\Leftrightarrow r=\left(\frac{3000M}{4\rho\pi}\right)^{\frac{1}{3}},
+\]
 
-\begin_inset Formula \[
-V=\frac{1000M}{\rho}=\frac{4}{3}\pi r^{3}\Leftrightarrow r=\left(\frac{3000M}{4\rho\pi}\right)^{\frac{1}{3}},\]
-
-\end_inset 
+\end_inset
 
  where 
 \begin_inset Formula $V$
-\end_inset 
+\end_inset
 
  is the volume of the body, in 
 \begin_inset Formula $m^{3}$
-\end_inset 
+\end_inset
 
 .
  Default density is 
 \begin_inset Formula $\rho=5.0\cdot10^{3}kgm^{-3}$
-\end_inset 
+\end_inset
 
 , roughly the density of Earth and most other solid planets.
-\layout Subsection
+\end_layout
 
+\begin_layout Subsection
 Simulation features
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 When two bodies go very near each other, the iterative nature of the algorithm
  causes large errors in the computation.
  Typically a body jumps very near another body, and causes a very strong
@@ -298,92 +434,123 @@ When two bodies go very near each other, the iterative nature of the algorithm
  This causes the both bodies to accelerate to very high speeds.
  We reduce this problem by ignoring the gravitational force if the distance
  between the bodies is very small.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Random numbers can not be initialized by using the 
-\emph on 
+\emph on
 time()
-\emph toggle 
- function, because if two or more processes start during the same second,
+\emph default
+ 
+\emph toggle
+function, because if two or more processes start during the same second,
  their random value generators will be initialized identically.
  The simulator calculates the random generator seed from current time and
  process id.
-\layout Section
+\end_layout
 
+\begin_layout Section
 Parallelization
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I use the parallel ring algorithm, as described in the lectures
 \begin_inset Foot
-collapsed true
+status collapsed
 
-\layout Standard
-
+\begin_layout Plain Layout
 I read only the lecture notes, and didn't fully understand the presented
  description of the ring algorithm.
  I hope that I understood the basic idea correctly.
-\end_inset 
+\end_layout
+
+\end_inset
 
 .
  The parallel algorithm is implemented by inheriting the 
-\emph on 
+\emph on
 NBody
-\emph toggle 
- class and redefining the 
-\emph on 
+\emph default
+ 
+\emph toggle
+class and redefining the
+\emph default
+ 
+\emph on
 run()
-\emph toggle 
- method.
-\layout Standard
+\emph default
+ 
+\emph toggle
+method.
+\end_layout
 
+\begin_layout Standard
 The basic idea is that each process has a set of 
-\emph on 
+\emph on
 local
-\emph toggle 
- bodies, owned by that process.
- The local bodies of each process are duplicated to a set of 
-\emph on 
+\emph default
+ 
+\emph toggle
+bodies, owned by that process.
+ The local bodies of each process are duplicated to a set of
+\emph default
+ 
+\emph on
 circulating
-\emph toggle 
- bodies.
+\emph default
+ 
+\emph toggle
+bodies.
  The circulating bodies are transferred through the ring and interacted
- with the 
-\emph on 
+ with the
+\emph default
+ 
+\emph on
 resident
-\emph toggle 
- (local) bodies at each process.
+\emph default
+ 
+\emph toggle
+(local) bodies at each process.
  After the circulating bodies have travelled through all processes and returned
  back to the original process, the symmetric forces accumulated in the circulati
 ng copies are added to the forces accumulated in the resident bodies.
  The resident and circulating sets of body objects thus form two interacting
  rings that are rotated one full revolution during each iteration step.
  These rings are illustrated in Figure 
-\begin_inset LatexCommand \ref{fig: rings}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: rings"
 
-\end_inset 
+\end_inset
 
 , where the outer ring represents the resident bodies and the inner ring
  the circulating bodies.
  The physical processes are represented as sectors separated by dotted lines.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 In the beginning of an iteration, after we have copied the local bodies
  to the resident bodies, we first calculate forces between these two sets,
  as shown in Figure 
-\begin_inset LatexCommand \ref{fig: rings}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: rings"
 
-\end_inset 
+\end_inset
 
 a .
  We add the force vector affecting each body to the data of that body, both
  in the resident and circulating bodies.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Then we rotate the inner ring by transmitting the circulating bodies data
  to the next process in the ring, as shown in Figure 
-\begin_inset LatexCommand \ref{fig: rings}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: rings"
 
-\end_inset 
+\end_inset
 
 a, and then compute the forces between the resident and received circulating
  bodies.
@@ -391,425 +558,544 @@ a, and then compute the forces between the resident and received circulating
  the ring and returned back to its original process.
  We can then update the velocities of the local bodies (both resident and
  circulating), and proceed to the next iteration cycle.
-\layout Standard
+\begin_inset Separator latexpar
+\end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-ring2.eps
-	display monochrome
 	width 100col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Shifting data in the process rings.
-\begin_inset LatexCommand \label{fig: rings}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: rings"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
 
  
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 This basic idea can be seen most clearly in the main loop of the 
-\emph on 
+\emph on
 run()
-\emph toggle 
--method of the class 
-\emph on 
+\emph toggle
+-method of the class
+\emph default
+ 
+\emph on
 RingNBody
-\emph toggle 
+\emph toggle
 :
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 // Create a double-buffered container for circulating bodies
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 Array<PackArray<Body> > circulatingBodies;
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 circulatingBodies.add (new PackArray<Body> (mBodies.size)); // Create buffer
  #0
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 circulatingBodies.add (new PackArray<Body> (mBodies.size)); // Create buffer
  #1
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 int ringSize = mrMPI.world().size();
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 for (int iter=0; iter<iters; iter++) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // Update positions of the bodies.
- Use ½h on the first
-\layout LyX-Code
+ Use Â½h on the first
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // iteration, to implement leapfrog method.
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     updatePositions (iter? h:h/2, !(iter%updateFreq), plotCoords);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     resetForces ();
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // Copy the local bodies into circulating bodies.
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     circulatingBodies[0].shallowCopy (mBodies);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     for (int i=0; i<ringSize; i++) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // Calculate forces diagonally between resident and
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // circulating bodies.
  On the step=0, the circulating
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // bodies are local.
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         calculateForces (mBodies, circulatingBodies[i%2], true);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
                         
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // Send circulating bodies forward in the ring
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         mrMPI.world().nbSend (circulatingBodies[i%2].data, 1, mpBodyVectorType->get
 Type(), mNext);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
                         
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // Receive circulating bodies from previous node in the
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // ring.
  In the last step, we receive back the local
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // circulating bodies, which we sent out in the step=0.
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         mrMPI.world().recv (circulatingBodies[(i+1)%2].data, 1, mpBodyVectorType->g
 etType(), mPrev);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     }
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // Add the forces from the circulated local bodies to resident
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // bodies
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     for (int i=0; i<mBodies.size; i++)
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         mBodies[i].addForce (circulatingBodies[ringSize%2][i].totalForce());
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     // Update velocities of the bodies
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     updateVelocities (h);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 }
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The algorithm uses double-buffering of the circulating bodies, because it
  uses non-blocking send method to shift the bodies forward in the process
  ring.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 We use the symmetric calculation of forces to avoid unnecessary duplication
  of calculations.
  The symmetric calculation between two sets of bodies is done as follows:
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 void NBody::calculateForces (PackArray<Body>& a, PackArray<Body>& b, bool
  diagonal) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     float r;
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     for (int i=0; i<a.size; i++) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         // Iterate only half of the a*b matrix
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         for (int j=diagonal? i+1:0; j<b.size; j++) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             // Compute force
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             Coord force = a[i].force (b[j], r);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
  
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             // Forces apply only if the bodies are further than the
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             // minimum distance
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             if (r>mMinR) {
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
                 a[i].addForce (force);
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
                 b[j].addForce (-force); // Symmetric force
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
             }
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
         }
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
     }
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 }
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Here the set of bodies 
-\family typewriter 
-\emph on 
+\family typewriter
+\emph on
 a
-\family default 
-\emph toggle 
- is a resident, and 
-\family typewriter 
-\emph on 
+\family default
+\emph default
+ 
+\emph toggle
+is a resident, and
+\emph default
+ 
+\family typewriter
+\emph on
 b
-\family default 
-\emph toggle 
- is circulating.
- If the parameter 
-\family typewriter 
+\family default
+\emph default
+ 
+\emph toggle
+is circulating.
+ If the parameter
+\emph default
+ 
+\family typewriter
+\emph toggle
 diagonal
-\family default 
- is true, the inner loop is done from 
-\emph on 
+\family default
+\emph default
+ 
+\emph toggle
+is true, the inner loop is done from
+\emph default
+ 
+\emph on
 i+1
-\emph toggle 
+\emph toggle
 .
  The symmetric calculations are illustrated in Figure 
-\begin_inset LatexCommand \ref{fig: symmetries}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: symmetries"
 
-\end_inset 
+\end_inset
 
 .
-\layout Standard
+\begin_inset Separator latexpar
+\end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-forces.eps
-	display monochrome
 	width 51col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Symmetric forces between resident and circulating bodies 
-\begin_inset LatexCommand \label{fig: symmetries}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: symmetries"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
 
 
-\layout Standard
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The algorithm does not transmit all the data of the 
-\emph on 
+\emph on
 Body
-\emph toggle 
- objects, only the positions, forces, and masses.
+\emph default
+ 
+\emph toggle
+objects, only the positions, forces, and masses.
  This requires a bit dirty tweaking of the vectors with the MPI data types,
- and relies strongly on the order of the attributes within the 
-\emph on 
+ and relies strongly on the order of the attributes within the
+\emph default
+ 
+\emph on
 Body
-\emph toggle 
- class, and that the class nor its attributes have a virtual table.
+\emph default
+ 
+\emph toggle
+class, and that the class nor its attributes have a virtual table.
  The solution is definitely not very clean object-oriented programming,
  but transmitting the object data otherwise would be much less efficient.
  Using a more clean solution might have required giving up the object-oriented
  approach altogether.
-\layout Section
+\end_layout
 
+\begin_layout Section
 Experiments
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I tested the program with three N-body systems.
  Two tests were with real planetary bodies, and one with totally random
  bodies.
@@ -817,101 +1103,123 @@ I tested the program with three N-body systems.
  program, because the number of bodies was so small, 2 and 5.
  The real-world tests were good for verifying the correctness of the physics
  calculations.
-\layout Subsection
+\end_layout
 
+\begin_layout Subsection
 Earth-Moon system
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 For experiments with Earth and Moon, I used the average distance of the
  Moon from Earth, 
 \begin_inset Formula $r=384400km$
-\end_inset 
+\end_inset
 
 .
  An approximate initial velocity can be calculated from 
 \begin_inset Formula $v=2\pi r/d/24/3600$
-\end_inset 
+\end_inset
 
 , where 
 \begin_inset Formula $d$
-\end_inset 
+\end_inset
 
  is the length of month, about 
 \begin_inset Formula $d\approx30$
-\end_inset 
+\end_inset
 
 .
  Thus, 
 \begin_inset Formula $v=931m/s$
-\end_inset 
+\end_inset
 
 .
  It should be obvious that these are 
-\emph on 
+\emph on
 very
-\emph toggle 
- approximate values.
- The experiment-specific parts of 
-\family typewriter 
+\emph default
+ 
+\emph toggle
+approximate values.
+ The experiment-specific parts of
+\emph default
+ 
+\family typewriter
+\emph toggle
 nbody.cfg
-\family default 
- file are as follows:
-\layout LyX-Code
+\family default
+\emph default
+ 
+\emph toggle
+file are as follows:
+\end_layout
 
+\begin_layout LyX-Code
 []
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 initer=PresetIniter
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 viewCenter.r   =400E6
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 [NBody]
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 n              =2
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 [PresetIniter]
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body0          =0,0,0,-11.45,5.97E24
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body1          =384400000,0,0,931,7.348E22
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I gave Earth a small velocity upwards (
 \begin_inset Formula $11.45m/s$
-\end_inset 
+\end_inset
 
 ), because Moon's initial velocity causes a slow drift downwards also for
  earth, which would cause the system to travel off the screen.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Figure 
-\begin_inset LatexCommand \ref{fig: moon}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: moon"
 
-\end_inset 
+\end_inset
 
  shows a simulation of the the Earth-Moon-system, with 
 \begin_inset Formula $h=60*60*24=86400s$
-\end_inset 
+\end_inset
 
  (one day).
  The picture on the left shows about one month, while the picture on the
@@ -924,108 +1232,144 @@ Figure
  A smaller time step would reduce the error.
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-moon1.epsi
-	display monochrome
 	width 40col%
 
-\end_inset 
+\end_inset
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
 
 \begin_inset Graphics
 	filename nbody-moon2.epsi
-	display monochrome
 	width 40col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Earth and Moon
-\begin_inset LatexCommand \label{fig: moon}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: moon"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
 
 
-\layout Subsection
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 Inner planets
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 I made also tests with some planets, as their approximate parameters are
  easily available.
  The application parameters for these tests are as follows:
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 []
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 initer         =PresetIniter
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 viewCenter.r   =200E9
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 [NBody]
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 n              =5
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 [PresetIniter]
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body0          =0,0,0,0,1.989E30
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body1          =57.9E9,0,0,47846,3.3E23
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body2          =108E9,0,0,35061,4.87E24
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body3          =150000000000,0,0,30000,5.97E24
-\layout LyX-Code
+\end_layout
 
+\begin_layout LyX-Code
 
-\size footnotesize 
+\size footnotesize
 body4          =150384400000,0,0,30931,7.348E22
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 Figure
-\begin_inset LatexCommand \ref{fig: planets}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: planets"
 
-\end_inset 
+\end_inset
 
  shows a test run done with a setting that does not undraw the positions
  of the bodies.
@@ -1034,109 +1378,141 @@ Figure
  Moon's orbit is not visible in the picture, as one pixel in the figure
  corresponds to million kilometers, and the radius of Moon's orbit is less
  than half of that.
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 More realistic initial parameters for the planets could be easily calculated,
  but the calculations could not in any way compete with more advanced planetary
  theories.
-\layout Standard
+\begin_inset Separator latexpar
+\end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-planets.epsi
-	display monochrome
 	width 40col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Orbits of Mercurius, Venus and Earth around the Sun.
  
-\begin_inset LatexCommand \label{fig: planets}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: planets"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
 
 
-\layout Paragraph
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
 Notes
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 For some reason, when using very high masses (around 
 \begin_inset Formula $10^{30}kg$
-\end_inset 
+\end_inset
 
 ), the velocity values sometimes go outside the value range of 
-\emph on 
+\emph on
 float
-\emph toggle 
- and 
-\emph on 
+\emph default
+ 
+\emph toggle
+and
+\emph default
+ 
+\emph on
 double
-\emph toggle 
- values.
+\emph default
+ 
+\emph toggle
+values.
  This is somewhat strange, since their value range should be well larger
  than 
 \begin_inset Formula $\pm10^{100}$
-\end_inset 
+\end_inset
 
 , and even multiplying 
 \begin_inset Formula $10^{30}\cdot10^{30}$
-\end_inset 
+\end_inset
 
  (in force calculation) gives only 
 \begin_inset Formula $10^{60}$
-\end_inset 
+\end_inset
 
 .
- I did not make tests with 
-\emph on 
+ I did not make tests with
+\emph default
+ 
+\emph on
 long double
-\emph toggle 
+\emph toggle
 .
-\layout Subsection
+\end_layout
 
+\begin_layout Subsection
 Random system
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The parallel solution was tested with a random system with two processes
  and four bodies in each process.
  The value range of the random initial positions was 
 \begin_inset Formula $[(-1,-1),(1,1)]$
-\end_inset 
+\end_inset
 
  (a square of 2x2 meters), initial velocities were 
 \begin_inset Formula $0.1mm/s$
-\end_inset 
+\end_inset
 
  in random direction, minimum gravitation effect radius was 
 \begin_inset Formula $1cm$
-\end_inset 
+\end_inset
 
 .
  Mass of all the bodies was 
 \begin_inset Formula $100kg$
-\end_inset 
+\end_inset
 
 .
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 One test run is shown in Figure 
-\begin_inset LatexCommand \ref{fig: random}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: random"
 
-\end_inset 
+\end_inset
 
 .
  Bodies handled by process 0 are shown in blue (or gray), bodies by process
@@ -1144,41 +1520,62 @@ One test run is shown in Figure
  The bodies escaped rather quickly from the view.
  I can not find any other reason for this behaviour but the accumulation
  of energy from calculation errors of the iterative simulation.
-\layout Standard
+\begin_inset Separator latexpar
+\end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
-collapsed false
+sideways false
+status open
 
-\layout Standard
-\align center 
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename nbody-random.epsi
-	display monochrome
 	width 40col%
 
-\end_inset 
+\end_inset
 
 
-\layout Caption
+\end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
 Random orbits with parallel solution.
-\begin_inset LatexCommand \label{fig: random}
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: random"
 
-\end_inset 
+\end_inset
 
 
-\end_inset 
+\end_layout
+
+\end_inset
 
 
-\layout Section
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Summary
-\layout Standard
+\end_layout
 
+\begin_layout Standard
 The parallel solution with ring algorithm worked fine.
  I did not make any measurements about the efficiency of the parallelization,
  because I used only one physical processor to make the tests.
-\the_end
+\end_layout
+
+\end_body
+\end_document

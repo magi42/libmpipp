@@ -5,6 +5,10 @@
 
 #include <mpi++.h>
 
+// TODO Parallel multiplication
+// We currently only have the trivial sequential multiplication implemented
+
+
 class MatrixMultiplier : public Object {
   public:
 	virtual	void	multiply	(const Matrix& a, const Matrix& b, Matrix& result) const=0;
