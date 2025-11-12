@@ -8,14 +8,14 @@ This is my minimalistic C++ wrapper for MPICH from 1999-2000.
 There are a number of small applications in the `examples` directory.
 Most of them are my excercise answers in the Parallel and High Performance Computing courses in 1999.
 
-The library requires [MagiCLib++](/magi42/magiclib).
+The library requires [MagiCLib++](https://github.com/magi42/magiclib).
 
 Some examples:
 
 ## N-Body
 
-[examples/nbody.h](examples/nbody.h)  
 [examples/nbody.cc](examples/nbody.cc)  
+[examples/nbody.h](examples/nbody.h)  
 Runs an n-body simulation in parallel.
 
 See [examples/nbody.pdf](examples/nbody.pdf) for the exercise answer.
@@ -34,11 +34,11 @@ Generates a Mandelbrot figure.
 [examples/wire.cc](examples/wire.cc)  
 A wire simulation.
 
-[examples/wireelement.cc](examples/wireelement.h)  
+[examples/wireelement.h](examples/wireelement.h)  
 [examples/wireelement.cc](examples/wireelement.cc)  
 A wire simulation.
 
-[examples/wibstring.cc](examples/wibstring.h)  
+[examples/wibstring.h](examples/wibstring.h)  
 [examples/wibstring.cc](examples/wibstring.cc)  
 A string simulation.
 
