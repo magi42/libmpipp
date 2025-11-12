@@ -1,4 +1,20 @@
 # MPI++ MPICH C++ wrapper
 
-This is a C++ wrapper for MPICH from around 2000.
+This is my C++ wrapper for MPICH from 1999-2000.
 There now exists more current proper ones.
+
+There are a number of small applications in the `examples` directory.
+
+Some examples:
+
+== Ping
+
+Simply pings all the nodes.
+See [examples/ping.pdf](examples/ping.pdf) for documentation.
+
+== Mandel
+
+[examples/mandel.cc](examples/mandel.cc)
+Generates a Mandelbrot figure.
+
+![Example run](examples/mandel,png)
