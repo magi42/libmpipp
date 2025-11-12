@@ -17,4 +17,4 @@ See [examples/ping.pdf](examples/ping.pdf) for documentation.
 [examples/mandel.cc](examples/mandel.cc)
 Generates a Mandelbrot figure.
 
-![Example run](https://github.com/magi42/libmpipp/examples/mandel,png?raw=true)
+![Example run](https://github.com/magi42/libmpipp/examples/mandel,gif?raw=true)
