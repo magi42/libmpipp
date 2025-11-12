@@ -1,0 +1,12 @@
+heat
+*.s
+Makefile
+Makefile.in
+mmul
+nbody
+*.bak
+*~
+ping
+*.Log.*
+wibstring
+wire

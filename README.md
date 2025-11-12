@@ -1,27 +1,52 @@
-# MPI++ MPICH C++ wrapper
+# MPICH1 C++ wrapper
 
-This is my C++ wrapper for MPICH from 1999-2000.
-There now exists more current proper ones.
+Marko Grönroos (magi@iki.fi)
+
+This is my minimalistic C++ wrapper for MPICH from 1999-2000.
+*There now exists more current proper ones.*
 
 There are a number of small applications in the `examples` directory.
 Most of them are my excercise answers in the Parallel and High Performance Computing courses in 1999.
 
+The library requires [MagiCLib++](/magi42/magiclib).
+
 Some examples:
-
-## Ping
-
-Simply pings all the nodes.
-See [examples/ping.pdf](examples/ping.pdf) for documentation.
 
 ## N-Body
 
-See [examples/nbody.pdf](examples/nbody.pdf) for code and documentation.
+[examples/nbody.h](examples/nbody.h)  
+[examples/nbody.cc](examples/nbody.cc)  
+Runs an n-body simulation in parallel.
+
+See [examples/nbody.pdf](examples/nbody.pdf) for the exercise answer.
 
 ![Mandelbrot figure](https://raw.githubusercontent.com/magi42/libmpipp/refs/heads/main/examples/nbody-random.png)
 
 ## Mandel
 
-[examples/mandel.cc](examples/mandel.cc)
+[examples/mandel.cc](examples/mandel.cc)  
 Generates a Mandelbrot figure.
 
 ![Mandelbrot figure](https://raw.githubusercontent.com/magi42/libmpipp/refs/heads/main/examples/mandel.gif)
+
+## Wire and a String
+
+[examples/wire.cc](examples/wire.cc)  
+A wire simulation.
+
+[examples/wireelement.cc](examples/wireelement.h)  
+[examples/wireelement.cc](examples/wireelement.cc)  
+A wire simulation.
+
+[examples/wibstring.cc](examples/wibstring.h)  
+[examples/wibstring.cc](examples/wibstring.cc)  
+A string simulation.
+
+![Wire](https://raw.githubusercontent.com/magi42/libmpipp/refs/heads/main/examples/wire.gif)
+
+## Ping
+
+[examples/ping.cc](examples/ping.cc)  
+Simply pings all the nodes.
+
+See [examples/ping.pdf](examples/ping.pdf) for the exercise answer.
