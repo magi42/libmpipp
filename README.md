@@ -7,14 +7,14 @@ There are a number of small applications in the `examples` directory.
 
 Some examples:
 
-== Ping
+## Ping
 
 Simply pings all the nodes.
 See [examples/ping.pdf](examples/ping.pdf) for documentation.
 
-== Mandel
+## Mandel
 
 [examples/mandel.cc](examples/mandel.cc)
 Generates a Mandelbrot figure.
 
-![Example run](https://github.com/magi42/libmpipp/examples/mandel,png)
+![Example run](https://github.com/magi42/libmpipp/examples/mandel,png?raw=true)
