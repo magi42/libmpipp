@@ -5,6 +5,8 @@ Marko Grönroos (magi@iki.fi)
 This is my minimalistic C++ wrapper for MPICH from 1999-2000.
 *There now exists more current proper ones.*
 
+See [my course page](https://magi.fi/opinnot/mpi/) for more detailed documentation of the code, excerises, and the courses.
+
 There are a number of small applications in the `examples` directory.
 Most of them are my excercise answers in the Parallel Computing and High Performance Computing courses in 1999-2003.
 
